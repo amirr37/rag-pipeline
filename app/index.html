@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>RAG Chatbot</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #76c7c0;
+        }
+
+        textarea, input[type=text], input[type=number] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 10px;
+            background-color: #333;
+            color: #eee;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #76c7c0;
+            border: none;
+            padding: 12px 20px;
+            color: #121212;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 49%;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #5aa7a2;
+        }
+
+        .response {
+            margin-top: 20px;
+            background-color: #292929;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>RAG Chatbot</h1>
+
+    <label for="query">Query:</label>
+    <input type="text" id="query" placeholder="Enter your question"/>
+
+    <label for="top_k">Top K (for retrieval):</label>
+    <input type="number" id="top_k" value="2" min="1" max="10"/>
+
+    <div class="btn-group">
+        <button id="retrieveBtn">🔍 Retrieve</button>
+        <button id="generateBtn">🧠 Generate</button>
+    </div>
+
+    <div id="retrieveResponse" class="response"></div>
+    <div id="generateResponse" class="response"></div>
+</div>
+
+<script>
+    const retrieveBtn = document.getElementById('retrieveBtn');
+    const generateBtn = document.getElementById('generateBtn');
+
+    let lastRetrievedDocs = [];
+
+    retrieveBtn.onclick = async () => {
+        const query = document.getElementById('query').value.trim();
+        const top_k = parseInt(document.getElementById('top_k').value);
+
+        if (!query) return alert("Please enter a query.");
+
+        const payload = {query, top_k};
+
+        try {
+            const res = await fetch('http://127.0.0.1:8000/retrieve', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error(`Status ${res.status}`);
+
+            const data = await res.json();
+            lastRetrievedDocs = data.documents;
+
+            document.getElementById('retrieveResponse').textContent = data.documents.join('\n\n---\n\n');
+            document.getElementById('generateResponse').textContent = '';
+        } catch (err) {
+            document.getElementById('retrieveResponse').textContent = 'Error retrieving documents: ' + err.message;
+        }
+    };
+
+    generateBtn.onclick = async () => {
+        const query = document.getElementById('query').value.trim();
+
+        // if (!query) return alert("Please enter a query.");
+        // if (!lastRetrievedDocs.length) return alert("Please retrieve documents first.");
+
+        // const context = lastRetrievedDocs.join('\n\n');
+        const top_k = parseInt(document.getElementById('top_k').value);
+
+        const payload = {query, top_k};
+
+        try {
+            const res = await fetch('http://127.0.0.1:8000/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error(`Status ${res.status}`);
+
+            const data = await res.json();
+            document.getElementById('generateResponse').textContent = data.answer;
+        } catch (err) {
+            document.getElementById('generateResponse').textContent = 'Error generating answer: ' + err.message;
+        }
+    };
+</script>
+</body>
+</html>

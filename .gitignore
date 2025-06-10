@@ -1,0 +1,85 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+.idea
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# ENV files
+.env
+.env.*
+
+# Virtual environment folders
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# VS Code settings folder
+.vscode/
+
+# MacOS files
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+*.sqlite
+
+# Data files (if you don’t want to track large data)
+data/
+data_*/
+*.txt
+*.parquet
+
+# ChromaDB persistence directory (if storing DB files locally)
+data/chroma_db/
