@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
+from retrieval import get_top_k_chunks
+from generation import ask_together
 
 app = FastAPI()
 
@@ -34,7 +36,6 @@ class GenerateRequest(BaseModel):
     top_k: int = 2
 
 
-
 class GenerateResponse(BaseModel):
     answer: str
 
@@ -49,12 +50,9 @@ def retrieve_docs(request: RetrieveRequest):
 
 @app.post("/generate", response_model=GenerateResponse)
 def generate_answer(request: GenerateRequest):
-    query = request.query
-    from retrieval import get_top_k_chunks
-    documents = get_top_k_chunks(query, top_k=request.top_k)
-    from generation import ask_together
-    response = ask_together(query, documents)
-
-    return GenerateResponse(answer=response)
-
-
+    try:
+        documents = get_top_k_chunks(request.query, top_k=request.top_k)
+        answer = ask_together(request.query, documents)
+        return GenerateResponse(answer=answer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

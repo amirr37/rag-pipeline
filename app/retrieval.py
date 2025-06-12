@@ -44,7 +44,7 @@ def get_top_k_chunks(query: str, top_k: int = 2):
 
     for idx in sorted_indices:
         chunk = chunks[idx]
-        if chunk not in seen:
+        if chunk not in seen :
             seen.add(chunk)
             top_chunks.append(chunk)
         if len(top_chunks) == top_k:
