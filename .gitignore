@@ -76,9 +76,9 @@ ENV/
 *.sqlite
 
 # Data files (if you don’t want to track large data)
-data/
+#data/
 data_*/
-*.txt
+#*.txt
 *.parquet
 
 # ChromaDB persistence directory (if storing DB files locally)
